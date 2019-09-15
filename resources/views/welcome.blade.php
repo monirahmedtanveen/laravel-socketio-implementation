@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>User List</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -45,7 +45,7 @@
             }
 
             .title {
-                font-size: 84px;
+                font-size: 40px;
             }
 
             .links > a {
@@ -65,36 +65,66 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
-
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    User List
                 </div>
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://vapor.laravel.com">Vapor</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Sl#</th>
+                                <th>Name</th>
+                                <th>Email Address</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data">
+                            @foreach ($users as $user)
+                                <tr>
+                                    <td>{{ $user->id }}</td>
+                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $user->created_at }}</td>
+                                </tr>
+                            @endforeach
+                        <tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Sl#</th>
+                                <th>Name</th>
+                                <th>Email Address</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
+
+        {{-- scripts --}}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.min.js"></script>
+        <script>
+        // this is all it takes to capture it in jQuery
+        // you put ready-snippet
+        $(function() {
+            //you define socket - you can use IP
+            var socket = io('http://localhost:3000');
+            //you capture message data
+            socket.on('laravel_database_user-channel:App\\Events\\UserBroadcast', function(data){
+                //you append that data to DOM, so user can see it
+                $('#data').append('<tr>'
+                    + '<td>' + data.user.id + '</td>' 
+                    + '<td>' + data.user.name + '</td>'
+                    + '<td>' + data.user.email + '</td>'
+                    + '<td>' + data.user.created_at + '</td>'
+                    + '</tr>')
+                // console.log(data.user.name);
+            });
+        });
+        
+        </script>
     </body>
 </html>

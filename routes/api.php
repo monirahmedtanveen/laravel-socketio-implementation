@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\SocketTesterEvent;
 use Illuminate\Http\Request;
 
 /*
